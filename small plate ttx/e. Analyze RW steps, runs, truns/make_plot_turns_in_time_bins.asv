@@ -1,0 +1,16 @@
+function [] = make_plot_turns_in_time_bins(ds)
+
+turns_per_min = ds.plates.turns_num_in_intrvl/5;
+m = mean(turns_per_min,2); 
+e = std(turns_per_min,1,2)/size(turns_per_min,2);
+intrvls = size(turns_per_min,1);
+centers = 2.5:5:(5*intrvls); % each row is a 5 minute intervals
+figure;
+clf;
+bar(centers, m, 0.9, 'facecolor', 0.9*[1 1 1.07]); 
+for k = 1:intrvls
+    line(centers(k)+[0 0], m(k)+e(k)*[-1 1], 'color', 0.4*[1 1 1]);
+end;
+xlabel('Average number of turns per minute scored from all worms on plate');
+
+return;

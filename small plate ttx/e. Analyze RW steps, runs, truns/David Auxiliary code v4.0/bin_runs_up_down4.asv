@@ -1,0 +1,19 @@
+function [N1,centers1,N3,centers3] = bin_runs_up_down4(ds)
+
+BIN_WIDTH = 8; % seconds
+
+%%% Group run-times according to the direction of the run
+[dur,ang,indx_dn,indx_up] = group_runs_up_down4(ds);
+
+dur_dn = dur(indx_dn);
+%dur_vr = dur(indx_vr);
+dur_up = dur(indx_up);
+
+
+%%% Calculate Ns, centers and taus for histograms %%%
+num_of_bins = round(max(dur_dn)/BIN_WIDTH); % make ~BIN_WIDTH seconds bins in the histograms
+[N1, centers1] = hist(dur_dn,num_of_bins);
+%[N2, centers2] = hist(dur_vr,centers1); % use same bins as down
+[N3, centers3] = hist(dur_up,centers1); % use same bins as down
+
+return;

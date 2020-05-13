@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright 2011 PixeLINK Version 1.1
+-->
+<ImageAcquisitionInfo>
+    <Help>
+        <AdaptorHelp property="Exposure"> 
+
+The exposure time, in milliseconds.
+
+        <SeeAlso>ExposureMode</SeeAlso>
+        </AdaptorHelp>
+        
+
+        <AdaptorHelp property="ExposureMode">Specify whether the Exposure property is controlled manually or automatically.
+
+When set to 'auto' the camera controls the exposure, and Exposure is read only.
+When set to 'manual' the user controls the exposure.
+
+        <SeeAlso>Exposure.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="Gain">Specify the camera gain.
+
+Camera gain, in dB.
+
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="Saturation">Specify the camera saturation.
+
+Controls saturation, in percent.
+
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="Brightness">Specify the brightness.
+
+Controls brightness, in percent.
+
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="Gamma">Specify the gamma.
+
+Controls gamma. GammaMode must be set to 'enabled' to enable gamma.
+
+        <SeeAlso>GammaMode.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="GammaMode">Specify the gamma mode.
+
+Enables or disables gamma.
+
+        <SeeAlso>Gamma.</SeeAlso>
+        </AdaptorHelp>
+
+        <AdaptorHelp property="WhiteBalanceMode">Set the white balance mode.
+
+This property is used to initiate a one-time white balance.
+A white balance will be performed when this property is set to 'autoOnce'.
+
+It is recommended that to do a white balance, you:
+1) Set WhiteBalanceMode to 'autoOnce' to do the white balance.
+2) Restore WhiteBalanceMode to 'manual' to prepare for the next white balance.
+
+It is not possible to perform a white balance while triggering is enabled.
+
+        <SeeAlso>WhiteBalanceRedGain, WhiteBalanceGreenGain, WhiteBalanceBlueGain</SeeAlso>
+        </AdaptorHelp>
+
+        
+        <AdaptorHelp property="WhiteBalanceRedGain">Specify the white balance's red gain value.
+
+Controls the red component of the white balance.
+
+        <SeeAlso>WhiteBalanceGreenGain, WhiteBalanceBlueGain, WhiteBalanceMode.</SeeAlso>
+        </AdaptorHelp>
+
+        <AdaptorHelp property="WhiteBalanceGreenGain">Specify the white balance's green gain value.
+
+Controls the green component of the white balance.
+
+        <SeeAlso>WhiteBalanceRedGain, WhiteBalanceBlueGain, WhiteBalanceMode.</SeeAlso>
+        </AdaptorHelp>
+
+		<AdaptorHelp property="WhiteBalanceBlueGain">Specify the white balance's blue gain value.
+
+Controls the blue component of the white balance.
+
+        <SeeAlso>WhiteBalanceRedGain, WhiteBalanceGreenGain, WhiteBalanceMode.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="ColorTemperature">Specify the color temperature.
+
+Controls the colour temperature, in degrees Kelvin.
+ColorTemperatureMode must be set to 'enabled' for this to take effect.
+Note that only certain color temperatures are supported. Consult Capture OEM to see which color temperatures are supported with your camera.
+        <SeeAlso>ColorTemperatureMode.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="ColorTemperatureMode">Specify the color temperature mode.
+
+Enables or disables color temperature. 
+
+        <SeeAlso>ColorTemperature.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="HorizontalFlip">Specify the horizontal flip.
+
+When enabled, flips the image horizontally.
+
+        <SeeAlso>VerticalFlip.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="VerticalFlip">Specify the vertial flip.
+
+When enabled, flips the image vertically.
+
+        <SeeAlso>HorizontalFlip.</SeeAlso>
+        </AdaptorHelp>
+
+        <AdaptorHelp property="FrameRate">Specify the desired frame rate.
+
+Sets a target frame rate. Maybe be limited by exposure. Check ActualFrameRate to confirm setting.
+
+        <SeeAlso>ActualFrameRate, Exposure.</SeeAlso>
+        </AdaptorHelp>
+
+        <AdaptorHelp property="ActualFrameRate"> Reports the actual frame rate of the camera
+
+Actual frame rate of the camera. May differ from set frame rate depending on exposure.
+
+        <SeeAlso>FrameRate, Exposure.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="PixelAddressingMode">Specify the pixel addressing mode.
+
+Selects the pixel addressing mode. 
+
+        <SeeAlso>PixelAddressingValue.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="PixelAddressingValue">Specify the pixel addressing value.
+
+Selects the pixel addressing value.
+
+        <SeeAlso>PixelAddressingMode.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="Sharpness">Specify the sharpening filter sharpness.
+
+Selects the sharpness, in percent.
+SharpnessMode must be set to 'enable'.
+
+        <SeeAlso>SharpnessMode.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="SharpnessMode">Specify whether the sharpening filter is enabled or disabled.
+
+Enables or disables sharpness.
+
+        <SeeAlso>Sharpness.</SeeAlso>
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="Name">
+
+The camera name.
+
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="SerialNumber">
+
+The camera's unique serial number.
+
+        </AdaptorHelp>
+        
+        <AdaptorHelp property="Gpo1Enabled">Specify whether to enable or disable General Purpose Output 1.
+        
+Enables or disables GPO 1.        
+
+		<SeeAlso>Gpo1Mode, Gpo1Polarity, Gpo1Parameter1, Gpo1Parameter2, Gpo1Parameter3.</SeeAlso>
+		</AdaptorHelp>
+	
+        <AdaptorHelp property="Gpo1Mode">Specify the operating mode for General Purpose Output 1
+
+Normal: The GPO is set either low or high, depending on the value of Gpo1Polarity. 
+        No parameters are used.
+        
+Strobe: The GPO is set after a trigger occurs. The GPO pulse is delayed X (Gpo1Parameter1) seconds and 
+        is Y (Gpo1Parameter2) seconds in duration.
+        
+Pulse:  The GPO is pulsed whenever it is turned on. The GPO outputs X (Gpo1Parameter1) pulses 
+        of Y (Gpo1Parameter2) seconds in length separated by Z (Gpo1Parameter3) seconds. 
+        The GPO is pulsed when the feature is set. It operates independently from frame capture.
+        
+Busy:   The GPO is set whenever the camera is unable to respond to a trigger. This is only useful when 
+        using Trigger Type Hardware. For all other modes it will always be set.  The busy period is defined as 
+        the period from the time a trigger is detected until the captured frame has been read out and any 
+        internal housekeeping is completed.  This mode can be used to detect missed triggers. No parameters are used.
+        
+Flash:  In this mode, the GPO indicates the window in which a strobe light source may be fired.  The GPO signal will be 
+        set once the sensor has completed the reset and starts integrating, and will be deactivated at the end of the 
+        exposure time as readout sensor commences. No parameters are used.  For best results, the strobe flash duration plus 
+        any delay from the flash window pulse to the start of the strobe flash should be less than the exposure time.
+
+See PixeLINK SDK Documentation for more details.
+
+		<SeeAlso>Gpo1Enabled, Gpo1Polarity, Gpo1Parameter1, Gpo1Parameter2, Gpo1Parameter3.</SeeAlso>
+		</AdaptorHelp>
+
+        <AdaptorHelp property="Gpo1Polarity">Specify the polarity of General Purpose Output 1
+
+Positive: Positive polarity (Active High)
+Negative: Negative polarity (Active Low)
+        
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo1Parameter1">Specify parameter 1 of General Purpose Output 1
+		
+The meaning of Gpo1Parameter1 depends upon the value of Gpo1Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo1Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo1Parameter2">Specify parameter 2 of General Purpose Output 1
+		
+The meaning of Gpo1Parameter2 depends upon the value of Gpo1Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo1Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo1Parameter3">Specify parameter 3 of General Purpose Output 1
+		
+The meaning of Gpo1Parameter3 depends upon the value of Gpo1Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo1Mode.</SeeAlso>
+		</AdaptorHelp>        
+		
+        <AdaptorHelp property="Gpo2Enabled">Specify whether to enable or disable General Purpose Output 2.
+        
+Enables or disables GPO 2.        
+
+		<SeeAlso>Gpo2Mode, Gpo2Polarity, Gpo2Parameter1, Gpo2Parameter2, Gpo2Parameter3.</SeeAlso>
+		</AdaptorHelp>
+	
+        <AdaptorHelp property="Gpo2Mode">Specify the operating mode for General Purpose Output 2
+
+Normal: The GPO is set either low or high, depending on the value of Gpo2Polarity. 
+        No parameters are used.
+        
+Strobe: The GPO is set after a trigger occurs. The GPO pulse is delayed X (Gpo2Parameter1) seconds and 
+        is Y (Gpo2Parameter2) seconds in duration.
+        
+Pulse:  The GPO is pulsed whenever it is turned on. The GPO outputs X (Gpo2Parameter1) pulses 
+        of Y (Gpo2Parameter2) seconds in length separated by Z (Gpo2Parameter3) seconds. 
+        The GPO is pulsed when the feature is set. It operates independently from frame capture.
+        
+Busy:   The GPO is set whenever the camera is unable to respond to a trigger. This is only useful when 
+        using Trigger Type Hardware. For all other modes it will always be set.  The busy period is defined as 
+        the period from the time a trigger is detected until the captured frame has been read out and any 
+        internal housekeeping is completed.  This mode can be used to detect missed triggers. No parameters are used.
+        
+Flash:  In this mode, the GPO indicates the window in which a strobe light source may be fired.  The GPO signal will be 
+        set once the sensor has completed the reset and starts integrating, and will be deactivated at the end of the 
+        exposure time as readout sensor commences. No parameters are used.  For best results, the strobe flash duration plus 
+        any delay from the flash window pulse to the start of the strobe flash should be less than the exposure time.
+
+See PixeLINK SDK Documentation for more details.
+
+		<SeeAlso>Gpo2Enabled, Gpo2Polarity, Gpo2Parameter1, Gpo2Parameter2, Gpo2Parameter3.</SeeAlso>
+		</AdaptorHelp>
+
+        <AdaptorHelp property="Gpo2Polarity">Specify the polarity of General Purpose Output 2
+
+Positive: Positive polarity (Active High)
+Negative: Negative polarity (Active Low)
+        
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo2Parameter1">Specify parameter 1 of General Purpose Output 2
+		
+The meaning of Gpo2Parameter1 depends upon the value of Gpo2Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo2Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo2Parameter2">Specify parameter 2 of General Purpose Output 2
+		
+The meaning of Gpo2Parameter2 depends upon the value of Gpo2Mode. See PixeLINK SDK Documentation.
+		<SeeAlso>Gpo2Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo2Parameter3">Specify parameter 3 of General Purpose Output 2
+		
+The meaning of Gpo2Parameter3 depends upon the value of Gpo2Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo2Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+        <AdaptorHelp property="Gpo3Enabled">Specify whether to enable or disable General Purpose Output 3.
+        
+Enables or disables GPO 3.        
+
+		<SeeAlso>Gpo3Mode, Gpo3Polarity, Gpo3Parameter1, Gpo3Parameter2, Gpo3Parameter3.</SeeAlso>
+		</AdaptorHelp>
+	
+        <AdaptorHelp property="Gpo3Mode">Specify the operating mode for General Purpose Output 3
+
+Normal: The GPO is set either low or high, depending on the value of Gpo3Polarity. 
+        No parameters are used.
+        
+Strobe: The GPO is set after a trigger occurs. The GPO pulse is delayed X (Gpo3Parameter1) seconds and 
+        is Y (Gpo3Parameter2) seconds in duration.
+        
+Pulse:  The GPO is pulsed whenever it is turned on. The GPO outputs X (Gpo3Parameter1) pulses 
+        of Y (Gpo3Parameter2) seconds in length separated by Z (Gpo3Parameter3) seconds. 
+        The GPO is pulsed when the feature is set. It operates independently from frame capture.
+        
+Busy:   The GPO is set whenever the camera is unable to respond to a trigger. This is only useful when 
+        using Trigger Type Hardware. For all other modes it will always be set.  The busy period is defined as 
+        the period from the time a trigger is detected until the captured frame has been read out and any 
+        internal housekeeping is completed.  This mode can be used to detect missed triggers. No parameters are used.
+        
+Flash:  In this mode, the GPO indicates the window in which a strobe light source may be fired.  The GPO signal will be 
+        set once the sensor has completed the reset and starts integrating, and will be deactivated at the end of the 
+        exposure time as readout sensor commences. No parameters are used.  For best results, the strobe flash duration plus 
+        any delay from the flash window pulse to the start of the strobe flash should be less than the exposure time.
+
+See PixeLINK SDK Documentation for more details.
+
+		<SeeAlso>Gpo3Enabled, Gpo3Polarity, Gpo3Parameter1, Gpo3Parameter2, Gpo3Parameter3.</SeeAlso>
+		</AdaptorHelp>
+
+        <AdaptorHelp property="Gpo3Polarity">Specify the polarity of General Purpose Output 3
+
+Positive: Positive polarity (Active High)
+Negative: Negative polarity (Active Low)
+        
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo3Parameter1">Specify parameter 1 of General Purpose Output 3
+		
+The meaning of Gpo3Parameter1 depends upon the value of Gpo3Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo3Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo3Parameter2">Specify parameter 2 of General Purpose Output 3
+		
+The meaning of Gpo3Parameter2 depends upon the value of Gpo3Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo3Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo3Parameter3">Specify parameter 3 of General Purpose Output 3
+		
+The meaning of Gpo3Parameter3 depends upon the value of Gpo3Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo3Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+        <AdaptorHelp property="Gpo4Enabled">Specify whether to enable or disable General Purpose Output 4.
+        
+Enables or disables GPO 4.        
+
+		<SeeAlso>Gpo4Mode, Gpo4Polarity, Gpo4Parameter1, Gpo4Parameter2, Gpo4Parameter3.</SeeAlso>
+		</AdaptorHelp>
+	
+        <AdaptorHelp property="Gpo4Mode">Specify the operating mode for General Purpose Output 4
+
+Normal: The GPO is set either low or high, depending on the value of Gpo4Polarity. 
+        No parameters are used.
+        
+Strobe: The GPO is set after a trigger occurs. The GPO pulse is delayed X (Gpo4Parameter1) seconds and 
+        is Y (Gpo4Parameter2) seconds in duration.
+        
+Pulse:  The GPO is pulsed whenever it is turned on. The GPO outputs X (Gpo4Parameter1) pulses 
+        of Y (Gpo4Parameter2) seconds in length separated by Z (Gpo4Parameter3) seconds. 
+        The GPO is pulsed when the feature is set. It operates independently from frame capture.
+        
+Busy:   The GPO is set whenever the camera is unable to respond to a trigger. This is only useful when 
+        using Trigger Type Hardware. For all other modes it will always be set.  The busy period is defined as 
+        the period from the time a trigger is detected until the captured frame has been read out and any 
+        internal housekeeping is completed.  This mode can be used to detect missed triggers. No parameters are used.
+        
+Flash:  In this mode, the GPO indicates the window in which a strobe light source may be fired.  The GPO signal will be 
+        set once the sensor has completed the reset and starts integrating, and will be deactivated at the end of the 
+        exposure time as readout sensor commences. No parameters are used.  For best results, the strobe flash duration plus 
+        any delay from the flash window pulse to the start of the strobe flash should be less than the exposure time.
+
+See PixeLINK SDK Documentation for more details.
+
+		<SeeAlso>Gpo4Enabled, Gpo4Polarity, Gpo4Parameter1, Gpo4Parameter2, Gpo4Parameter4.</SeeAlso>
+		</AdaptorHelp>
+
+        <AdaptorHelp property="Gpo4Polarity">Specify the polarity of General Purpose Output 4
+
+Positive: Positive polarity (Active High)
+Negative: Negative polarity (Active Low)
+        
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo4Parameter1">Specify parameter 1 of General Purpose Output 4
+		
+The meaning of Gpo4Parameter1 depends upon the value of Gpo4Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo4Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo4Parameter2">Specify parameter 2 of General Purpose Output 4
+		
+The meaning of Gpo4Parameter2 depends upon the value of Gpo4Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo4Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		<AdaptorHelp property="Gpo4Parameter3">Specify parameter 3 of General Purpose Output 4
+		
+The meaning of Gpo4Parameter3 depends upon the value of Gpo4Mode. See PixeLINK SDK Documentation.
+
+		<SeeAlso>Gpo4Mode.</SeeAlso>
+		</AdaptorHelp>        
+
+		
+	</Help>
+</ImageAcquisitionInfo>
+

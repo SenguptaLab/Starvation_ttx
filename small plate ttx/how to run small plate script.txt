@@ -1,0 +1,14 @@
+1. To recrod video, run PX_MOJO_video_capture_bcg_sub.m
+ 
+2. Track with Wormlab and export CSV file into the foder of trial with respective name. 
+
+3. Post-analysis with Matlab  
+	-Pile up exported tracking-csv files into one folder.
+	-Run "calibrateimagesdonny_new_mp4" on each mp4 file to create cal.csv, and move it into the folder
+	(make it sure the name of cal.csv and tracking-csv files are matching)
+	-Run "WormlabToMatlab_batch_2100" on the folder of cal.csv&amp; tracking-csv files.
+	-Run "Find_tracks_in_raw_data_WL_batch" in b. Find_tracks_in_raw_data folder (Do NOT move out from this folder)
+	-Run "Filter_out_noise_from_tracks_data_WL" in c. Filter out noise folder (Do NOT move out from this folder)
+	*Script recognizes ‘cal’ and ‘center’, so works with exported tracking-csv files in the same folder.
+	* Run WormlabToMatlab_batch_2100--> Find_tracks_in_raw_data_WL_batch--> Filter_out_noise_from_tracks_data_WL sequentially
+

@@ -1,0 +1,66 @@
+function tracks = filter_noise4(tr_and_ns)
+%
+% General: 
+%    Filter out what looks like noise rather than real worm tracks. 
+%
+% INPUT: 
+%   tr - a structure pepared by flagturns3.m containing tracks and turns
+%        data (see flagturn3.m)
+% OUTPUT: 
+%   tracks - but without (some of) the noise tracks
+
+global Min_Dist_for_track      % in pixels - 6 pixels ~ worm body length
+global Min_Time_for_track      % in seconds
+global Min_RadiusOfGyration_for_Track  % in pixels - 6 pixels ~ worm body length
+global Max_Dist_for_run        % in pixels - 6 pixels ~ worm body length
+global Max_Time_for_run        % in seconds
+global Min_Dist_for_run        % in pixels - 6 pixels ~ worm body length
+global Min_Time_for_run        % in seconds
+global Max_XY_for_single_frame % in pixels (normalized for per second value)
+global Min_average_velocity    % pixels/second (about 0.25x of average velocity) 
+global Max_average_velocity    % pixels/second (about 4x of average velocity)
+
+tracks = [];
+for i=1:length(tr_and_ns) %for each track of worm    
+    flag = (sum(tr_and_ns(i).run_dist) > Min_Dist_for_track);
+    flag = (flag & sum(tr_and_ns(i).run_time) > Min_Time_for_track);
+    Dx = (max(tr_and_ns(i).x)-min(tr_and_ns(i).x));
+    Dy = (max(tr_and_ns(i).y)-min(tr_and_ns(i).y));
+    flag = (flag & sqrt(Dx^2+Dy^2) > Min_RadiusOfGyration_for_Track);
+    flag = (flag & max(tr_and_ns(i).run_dist) < Max_Dist_for_run);
+    flag = (flag & max(tr_and_ns(i).run_time) < Max_Time_for_run);
+    flag = (flag & max(tr_and_ns(i).run_dist) > Min_Dist_for_run);
+    flag = (flag & max(tr_and_ns(i).run_time) > Min_Time_for_run);
+    tmp = ( max(diff(tr_and_ns(i).x))<Max_XY_for_single_frame );
+    tmp = (tmp | ( max(diff(tr_and_ns(i).y))<Max_XY_for_single_frame ));    
+    flag = (flag & tmp);
+    v = mean(tr_and_ns(i).run_dist ./ tr_and_ns(i).run_time);
+    flag = ( flag & (v>Min_average_velocity) );
+    flag = ( flag & (v<Max_average_velocity) );
+    
+    if flag % probably real track and not noise
+        tracks = [tracks, tr_and_ns(i)];
+if i<11        
+display(['i = ' num2str(i) ' is a track.']);
+end;
+    else
+if i<11        
+display(['i = ' num2str(i) ' is a NOISE.']);
+sum(tr_and_ns(i).run_dist) > Min_Dist_for_track
+sum(tr_and_ns(i).run_time) > Min_Time_for_track
+sqrt(Dx^2+Dy^2) > Min_RadiusOfGyration_for_Track
+max(tr_and_ns(i).run_dist) < Max_Dist_for_run
+max(tr_and_ns(i).run_time) < Max_Time_for_run
+max(tr_and_ns(i).run_dist) > Min_Dist_for_run
+max(tr_and_ns(i).run_time) > Min_Time_for_run
+max(diff(tr_and_ns(i).x))<Max_XY_for_single_frame
+    tmp = (tmp | ( max(diff(tr_and_ns(i).y))<Max_XY_for_single_frame ));    
+    flag = (flag & tmp);
+    v = mean(tr_and_ns(i).run_dist ./ tr_and_ns(i).run_time);
+    flag = ( flag & (v>Min_average_velocity) );
+    flag = ( flag & (v<Max_average_velocity) );
+end;
+    end;
+end;
+
+

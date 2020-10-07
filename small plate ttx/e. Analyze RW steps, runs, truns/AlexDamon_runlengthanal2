@@ -1,0 +1,408 @@
+function [cents,mdur,sdur]=runlengthanal(tr,varargin);
+
+warning off MATLAB:divideByZero
+PLOTHISTS=0;
+PLOTHISTS2=1;
+
+if nargin>1
+    APPEND=varargin{1};
+else
+    APPEND='';
+end
+
+SHAPE='o';  % shape in plot
+
+wormsec=0;
+for i=1:length(tr)
+    wormsec=wormsec+2*length(tr(i).f);
+end
+disp(['total worm hours tracked = ' num2str(wormsec/3600)]);
+
+len=[];
+lens=[];
+ang=[];
+angcind=[];
+dur=[];
+allx=[];
+ally=[];
+for i=1:length(tr)
+    if length(tr(i).turn)>=2
+        t=tr(i).turn;
+        dist=[0;cumsum(sqrt(diff(tr(i).x).^2+diff(tr(i).y).^2))];
+        dx=tr(i).x(t(2:end))-tr(i).x(t(1:end-1));
+        dy=tr(i).y(t(2:end))-tr(i).y(t(1:end-1));
+        dt=tr(i).f(t(2:end))-tr(i).f(t(1:end-1));
+        angi=angle(dx+sqrt(-1)*dy);
+        leni=sqrt(dx.^2+dy.^2);
+        lensi=dist(t(2:end))-dist(t(1:end-1));
+        if 0
+            choose=find(tr(i).x(t(1:end-1))<320 & tr(i).y(t(1:end-1))<240);
+        else
+            choose=[1:length(dx)];
+        end
+        dur=[dur;dt(choose)];
+        len=[len;leni(choose)];
+        lens=[lens; lensi(choose)];
+        angcind=[angcind,length(ang)+3+[1:length(choose)-1]];  % get indices for doing correlation stuff... groups them together
+        ang=[ang;angi(choose)];
+        allx=[allx;dx(choose)];
+        ally=[ally;dy(choose)];
+    end
+end
+allpathsang=[];
+turnang=[];
+for i=1:length(tr)
+    allpathsang=[allpathsang;tr(i).ang(find(tr(i).dang>0))];
+    turnang=[turnang;tr(i).ang(intersect(tr(i).turn,find(tr(i).dang>0)))];  % make sure these aren't 0
+end
+
+
+% chooseall=find(dur>2 & lens>2 & len>4 & dur<150);  % 3+ frames, 4 pixels, etc., kill large 2 (special case)
+chooseall=find(dur>2 & lens>2 & len>4 & pi*len/2>lens);  % 3+ frames, 4 pixels, etc., kill large 2 (special case)
+% above one is GOOD
+% chooseall=find(dur>2 & lens>2 & len>4);  % 3+ frames, 4 pixels, etc., kill large 2 (special case)
+
+alldur=dur;  % for use with correlations on subsequent runs...
+allang=ang;  
+dur=dur(chooseall);
+len=len(chooseall);
+lens=lens(chooseall);
+ang=ang(chooseall);
+allx=allx(chooseall);
+ally=ally(chooseall);
+% get symmetric angles... never mind.  [-pi,pi]
+ang(ang>pi)=2*pi-ang(ang>pi);  
+ang=abs(ang);
+disp([num2str(length(len)) ' runs found']);
+
+%dur=dur*2;   % account for 2 second frames!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%only 1 fps
+if 0
+	figure; plot(dur,lens,'b.');
+	hold on; plot(dur,len,'r.');
+	cs=corrcoef(dur,lens);
+	cl=corrcoef(dur,len);
+	disp(['r path = ' num2str(cs(1,2)) '; r run = ' num2str(cl(1,2))]);
+	title('runlength vs. duration');
+	xlabel('time (s)');
+	ylabel('path length (pixels)');
+	
+	figure;
+	plot(ang,dur,'.');
+	title('scatter of runs');
+	xlabel('run angle (rads)');
+	ylabel('run duration (seconds)');
+end
+
+timebin=8;
+timeedges=[timebin:timebin:max(dur)];
+timecents=[3*timebin/2:timebin:timeedges(end)];
+
+% bin=pi/20;   % paper value = 20
+bin=pi/10;
+bin2=pi/4;
+bin3=pi/2;
+edges=[0:bin:pi];
+edges2=[0:bin2:pi];
+edges3=[0:bin3:pi];
+cents=edges(1)+bin/2:bin:edges(end);
+cents2=edges2(1)+bin2/2:bin2:edges2(end);
+cents3=edges3(1)+bin3/2:bin3:edges3(end);
+[n,inds]=histc(ang,edges);
+[n2,inds2]=histc(ang,edges2);
+[n3,inds3]=histc(ang,edges3);
+
+if 0
+	figure;   % counting figure
+	%bar(edges,n,'histc');
+	%errorbar(cents,n(1:end-1),sqrt(n(1:end-1)));
+	[pc,sc]=lsq('modelconst',[1],180/pi*cents',n(1:end-1),sqrt(n(1:end-1)),1);
+	ylabel('counts');
+	xlabel('angle center');
+	title(['counts in different directions: P_{const} = ' num2str(sc.p_fit)]);
+end
+
+u=1:length(edges);
+if PLOTHISTS
+    figure;
+end
+if PLOTHISTS2 % true
+%     figure;
+%     subplot(2,2,1);
+    choose=find(inds2==1);  % moving up
+    n=histc(dur(choose),timeedges);
+    n=n(1:end-1);
+%     [p,s]=lsq('modelexp',[100 10],timecents(n>0)',n(n>0),sqrt(n(n>0)),1);
+    [p,s]=lsq('modelexp',[100 10],timecents(n>0)',n(n>0),sqrt(n(n>0)),0);
+%     set(gca,'yscale','log');
+%     set(gca,'xlim',[0,max(timeedges)]);
+%     fdur(1)=p(2);
+    n1=n;
+    p1=p(2);
+%     title(['moving up the gradient = ' num2str(p(2))]);
+%     subplot(2,2,3);
+    choose=find(inds2==4);   % moving down
+    n=histc(dur(choose),timeedges);
+    n=n(1:end-1);
+%     [p,s]=lsq('modelexp',[100 10],timecents(n>0)',n(n>0),sqrt(n(n>0)),1);
+    [p,s]=lsq('modelexp',[100 10],timecents(n>0)',n(n>0),sqrt(n(n>0)),0);
+%     set(gca,'yscale','log');
+%     set(gca,'xlim',[0,max(timeedges)]);
+%     fdur(1)=p(2);
+    n2=n;
+    p2=p(2);
+%     title(['moving down the gradient = ' num2str(p(2))]);
+%     subplot(1,2,2);
+%     hold on;
+%     h1=plot(timecents(n1>0),log10(n1(n1>0)./sum(n1(n1>0))),'k.-');  % up
+%     h2=plot(timecents(n2>0),log10(n2(n2>0)./sum(n2(n2>0))),'k.:');  % down
+%     set(h1,'marker','o','markeredge','k','markerface','k');
+%     set(h2,'marker','o','markeredge','k','markerface',[1 1 1]);
+%     % final figure here
+%     figure;   %%%%%%%%% 90 degrees about up and down...
+%     hold on;
+% %     h1=plot(timecents(n1>0),log10(n1(n1>0)./sum(n1(n1>0))),'k.-');  % up
+% %     h2=plot(timecents(n2>0),log10(n2(n2>0)./sum(n2(n2>0))),'k.:');  % down
+%     h1=plot(timecents(:),log10(n1(:)./sum(n1(:))),'k.-');  % up
+%     h2=plot(timecents(:),log10(n2(:)./sum(n2(:))),'k.:');  % down
+%     title(['runs up and down, 90degrees about it; time up = ' num2str(p1) ' s, down = ' num2str(p2)]);
+%     set(h1,'marker','o','markeredge','r');
+%     set(h2,'marker','o','markeredge','k');
+%     set(gca,'ylim',[-4 0],'xlim',[0 275]);
+%     xlabel('run duration (s)');
+%     ylabel('log_{10} fraction of runs');
+    
+    % another thought
+    figure(11); hold on;
+    choose1=find(inds3==1);   % those going up
+    choose2=find(inds3==2);   % down
+    n1=histc(dur(choose1),timeedges);
+    n2=histc(dur(choose2),timeedges);
+    n1=n1(1:end-1); n2=n2(1:end-1);
+    n1(:)./sum(n1(:))
+    n2(:)./sum(n2(:))
+    h1=plot(timecents(:),log10(n1(:)./sum(n1(:))),'k.-');  % up
+    h2=plot(timecents(:),log10(n2(:)./sum(n2(:))),'k.:');  % down
+    [p1,s]=lsq('modelexp',[100 10],timecents(n1>0)',n1(n1>0),sqrt(n1(n1>0)),0);
+    [p2,s]=lsq('modelexp',[100 10],timecents(n2>0)',n2(n2>0),sqrt(n2(n2>0)),0);
+    title([APPEND ': runs up and down, 180degrees about it; time up = ' num2str(p1(2)) ' s, down = ' num2str(p2(2))]);
+    set(h1,'marker','o','markeredge','r'); %up
+    set(h2,'marker','o','markeredge','k'); %down
+    set(gca,'ylim',[-4 0],'xlim',[0 275]);
+    xlabel('run duration (s)');
+    ylabel('log_{10} fraction of runs');
+end
+for i=1:length(u)-1;
+    choose=find(inds==u(i));
+    angledurpoints{i}=dur(choose);
+    mlen(i)=mean(len(choose));
+    mdur(i)=mean(dur(choose));
+    slen(i)=std(len(choose))/sqrt(length(choose));
+    sdur(i)=std(dur(choose))/sqrt(length(choose));
+    if PLOTHISTS
+%     subplot(ceil(sqrt(length(u)-1)),ceil(sqrt(length(u)-1)),i);
+    n=histc(dur(choose),timeedges);
+    n=n(1:end-1);
+    [p,s]=lsq('modelexp',[100 10],timecents(n>0)',n(n>0),sqrt(n(n>0)),1);
+    set(gca,'yscale','log','xlim',[min(timeedges),max(timeedges)]);
+    fdur(i)=p(2);
+    end
+end
+% figure; subplot(2,1,1); hold on;
+% %errorbar(cents,mlen,slen); hold on;
+% allangs=[0:.01:pi];
+% [pf,sf]=lsq('modelcos',[1 1],cents,mlen,slen,0);
+% [pc,sc]=lsq('modelconst',[1],cents,mlen,slen,0);
+% plot(180/pi*cents,feval('modelcos',pf,cents),'k-');
+% plot(180/pi*cents,feval('modelconst',pc',cents),'k-');
+% errorbar(180/pi*cents,mlen,slen); 
+% ylabel('mean run length (pixels)');
+% title(['run lengths vs. angle, P_{const}=' num2str(sc.p_fit) ', P_{fit}= ' num2str(sf.p_fit)]);
+% %plot(allangs,(1-cos(allangs))*(max(mlen)-min(mlen))/2+min(mlen),'r-');
+% 
+% subplot(2,1,2);
+% %errorbar(cents,mdur,sdur); hold on;
+% %plot(allangs,(1-cos(allangs))*(max(mdur)-min(mdur))/2+min(mdur),'r-');
+% [pf,sf]=lsq('modelcos',[1 1],cents,mdur,sdur,0); hold on;
+% [pc,sc]=lsq('modelconst',[30],cents,mdur,sdur,0);
+% plot(180/pi*cents,feval('modelcos',pf,cents),'k-');
+% plot(180/pi*cents,feval('modelconst',pc',cents),'k-');
+% errorbar(180/pi*cents,mdur,sdur); 
+% title(['run duration vs. angle, P_{const}=' num2str(sc.p_fit) ', P_{fit}= ' num2str(sf.p_fit)]);
+% ylabel('mean run duration (2 s)');
+% xlabel(['angle center']);
+
+%%% final figure
+figure(12); hold on;
+centsfine=[0:.01:pi];
+[pf,sf]=lsq('modelcos',[1 1],cents,mdur,sdur,0);
+[pf2,sf2]=lsq('modelsgncos',[1 1],cents,mdur,sdur,0);  % sign of cos fit...
+[pl,sl]=lsq('modellinear',[1 1],cents,mdur,sdur,0);
+[pc,sc]=lsq('modelconst',[30],cents,mdur,sdur,0);
+h1=plot(cents*180/pi,mdur,[SHAPE 'k-']); 
+% set(h1,'markerface','k');
+for i=1:length(cents)
+    h1=line(180/pi*[cents(i),cents(i)],[mdur(i)-sdur(i),mdur(i)+sdur(i)]); 
+    set(h1,'color','k');
+end
+%plot(180/pi*centsfine,feval('modelcos',pf,centsfine),'k-');
+%plot(180/pi*centsfine,feval('modelconst',pc,centsfine),'k-');
+%plot(180/pi*centsfine,feval('modelsgncos',pf2,centsfine),'k-');
+%plot(180/pi*centsfine,feval('modellinear',pl,centsfine),'k-');
+title([APPEND ': run duration vs. angle, P_{const}=' num2str(sc.p_fit) ', P_{cos}= ' num2str(sf.p_fit) ...
+        ', P_{sgn(cos)}= ' num2str(sf2.p_fit) ', P_{lin}= ' num2str(sl.p_fit)]);
+ylabel('mean run duration (seconds)');
+xlabel(['angle center']);
+set(gca,'ylim',[10,40]);
+
+% keyboard;
+
+if 0
+subplot(3,1,3);
+[pf,sf]=lsq('modelcos',[1 1],180/pi*cents,fdur,ones(size(fdur))*max(fdur)/30,1);
+[pc,sc]=lsq('modelconst',[1],180/pi*cents,fdur,ones(size(fdur))*max(fdur)/30,0);
+title(['run duration vs. angle, P_{const}=' num2str(sc.p_fit) ', P_{fit}= ' num2str(sf.p_fit)]);
+ylabel('fit run duration (2 s)');
+xlabel(['angle center']);
+end
+
+% figure; hold on;
+% [pf,sf]=lsq('modelcos',[1 1],cents,mdur,sdur,0);
+% [pc,sc]=lsq('modelconst',[1],cents,mdur,sdur,0);
+% polar(cents,mdur,'b-');
+% polar(cents,mdur-sdur,'b:');
+% polar(cents,mdur+sdur,'b:');
+% polar([0:.01:pi],modelcos(pf,[0:.01:pi]),'r-');
+% polar([0:.01:pi],modelconst(pc,[0:.01:pi]),'k:');
+% plot(0,0,'m*','markersize',40);
+% set(gca,'dataaspect',[1 1 1]);
+
+% figure;
+% n=histc(dur,timeedges); 
+% % choose=find(n>0);
+% % choose=choose(choose<length(n));  % all but last bin
+% choose=[1:length(n)-1];
+% tot=sum(n(choose));
+% [p,s]=lsq('modelexp',[100 10],timecents(choose)',n(choose)./tot,sqrt(n(choose))./tot,0);
+% h1=plot(timecents(choose),log10(n(choose)/tot),'ko-'); hold on;
+% set(h1,'markerface','k');
+% plot([0:max(timecents(choose))],log10(feval('modelexp',p,[0:max(timecents(choose))])),'k:');
+% disp(['run length = ' num2str(p(2)) ', P= ' num2str(s.p_fit)]);
+% set(gca,'ylim',[-3 0]);
+% % plot(timecents,exp(polyval(p,timecents)),'r');
+
+
+% figure;
+% plot(allx,ally,'k.'); hold on;
+% set(gca,'dataaspect',[1 1 1]);
+% h1=plot(0,0,'.');
+% set(h1,'color','white');
+% title('pixel values!');
+
+figure(13);
+plot(dur.*allx./sqrt(allx.^2+ally.^2),dur.*ally./sqrt(allx.^2+ally.^2),'k.');
+hold on;
+set(gca,'dataaspect',[1 1 1]);
+h1=plot(0,0,'.');
+set(h1,'color','white');
+%title([APPEND ': duration values!']);
+xlabel('time (s)');
+ylabel('time (s)');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+indx_up = find(allx>0 & abs(allx)>abs(ally));
+indx_dn = find(allx<0 & abs(allx)>abs(ally));
+x_up = allx(indx_up);
+y_up = ally(indx_up);
+x_dn = allx(indx_dn);
+y_dn = ally(indx_dn);
+dur_up = dur(indx_up);
+dur_dn = dur(indx_dn);
+
+display('sum total:')
+sum(dur_up)
+sum(dur_dn)
+%sum(allx(allx<0))
+%sum(allx(allx>0))
+display('# of runs:')
+length(dur_up)
+length(dur_dn)
+%length(allx(allx<0))
+%length(allx(allx>0))
+display('average runs:')
+mean(dur_up)
+mean(dur_dn)
+%mean(allx(allx<0))
+%mean(allx(allx>0))
+
+
+
+plot(dur_up.*x_up./sqrt(x_up.^2+y_up.^2),dur_up.*y_up./sqrt(x_up.^2+y_up.^2),'r.'); %%%% REVERSED ANGLE FROM DAMON'S ORIGINAL
+plot(dur_dn.*x_dn./sqrt(x_dn.^2+y_dn.^2),dur_dn.*y_dn./sqrt(x_dn.^2+y_dn.^2),'b.'); %%%% REVERSED ANGLE FROM DAMON'S ORIGINAL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%myup = sum(allx(allx>0)); 
+%mydown = abs(sum(allx(allx<0))); 
+%myindex = (mydown-myup) / (mydown+myup)
+%title(['I_{cryo} = ' num2str(myindex)]);
+
+
+% figure;
+% [npath,indspath]=histc(allpathsang,edges);
+% npath=npath(1:end-1);
+% [nturn,indsturn]=histc(turnang,edges);
+% nturn=nturn(1:end-1);
+% probturn=nturn./npath;
+% probturnerr=nturn./npath.*sqrt(1./nturn+1./npath);
+% %errorbar(cents,probturn,probturnerr);
+% [pf,sf]=lsq('modelcos',[1 1],cents',probturn,probturnerr,0); hold on;
+% [pc,sc]=lsq('modelconst',[1],cents',probturn,probturnerr,0);
+% errorbar(180/pi*cents,probturn,probturnerr);
+% plot(180/pi*cents,feval('modelcos',pf,cents));
+% title(['turning prob vs. angle, P_{const}=' num2str(sc.p_fit) ', P_{fit}= ' num2str(sf.p_fit)]);
+% ylabel('turning probability/2s');
+% xlabel('angle');
+% 
+% figure;
+% [pf,sf]=lsq('modelcos',[1 1],cents',npath./nturn,npath./nturn.*sqrt(1./nturn+1./npath),0); hold on;
+% [pc,sc]=lsq('modelconst',[1],cents',npath./nturn,npath./nturn.*sqrt(1./nturn+1./npath),0);
+% errorbar(180/pi*cents,npath./nturn,npath./nturn.*sqrt(1./nturn+1./npath));
+% plot(180/pi*cents,feval('modelcos',pf,cents));
+% title(['predicted run duration vs. angle, P_{const}=' num2str(sc.p_fit) ', P_{fit}= ' num2str(sf.p_fit)]);
+% ylabel('turning probability/2s');
+% xlabel('angle');
+% % keyboard;
+% eval(['cd ' currdir]);
+% 
+% 
+% % keyboard;
+% % find all neighboring pairs
+% choose=find(angcind(1:end-1)==angcind(2:end)-1); %gets them
+% disp(['neighboring over all of ''em = ' num2str(length(choose)/length(allang))]);
+% cang=corrcoef(allang(choose),allang(choose+1));
+% cdur=corrcoef(alldur(choose),alldur(choose+1));
+% figure;
+% subplot(2,1,1);
+% plot(abs(allang(choose)),abs(allang(choose+1)),'r.');
+% set(gca,'xlim',[0 pi],'ylim',[0 pi]);
+% subplot(2,1,2);
+% plot(alldur(choose),alldur(choose+1),'r.');
+% disp(['correlation of angle with subsequent angle: ' num2str(cang(2,1))]);
+% disp(['correlation of duration with subsequent duration: ' num2str(cdur(2,1))]);
+% 
+% 
+% %%% plot and save relavent figs...
+% if 0
+%     close([1:5 7 9:11 13 14 15]);
+%     figure(6);
+%     name=[inputname(1) '_updownhist.eps'];
+%     eval(['print -depsc ' name]);
+%     figure(8);
+%     name=[inputname(1) '_anglemean.eps'];
+%     eval(['print -depsc ' name]);
+%     figure(12);
+%     name=[inputname(1) '_scatter.eps'];
+%     eval(['print -depsc ' name]);
+% end
+
+%cd 'C:\Documents and Settings\Aravi Samuel\Desktop\Labview Routines\CHOP\Thermo_from_23C\'
